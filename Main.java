@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -62,18 +65,12 @@ public class Main {
         String Task = scan.nextLine();
 
         if (Task != ""){
-            Scanner reader = new Scanner(new File("data.txt"));
-            while (reader.hasNextLine()){
-                dataKeeper = dataKeeper + "\n" + reader.nextLine();
-            }
-            dataKeeper = dataKeeper + "\n" + Task;
-            reader.close();
+            innitArray();
+            dataInformation.add(Task);
 
-            FileWriter writer = new FileWriter("data.txt");
-            writer.write(dataKeeper);
-            writer.close();
-            dataKeeper = "";
-
+            Path output = Paths.get("data.txt");
+            Files.write(output, dataInformation);
+            dataInformation.clear();
             welcomeWin();
         }
         else{
