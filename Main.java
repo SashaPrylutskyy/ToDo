@@ -13,16 +13,20 @@ public class Main {
     public static Boolean isWarning = false;
 
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String BLACK = "\033[0;30m";   // BLACK
     public static final String RED = "\033[0;31m";     // RED
     public static final String GREEN = "\033[0;32m";   // GREEN
     public static final String YELLOW = "\033[0;33m";  // YELLOW
-    public static final String PURPLE = "\033[0;35m";  // PURPLE
     public static final String CYAN = "\033[0;36m";    // CYAN
-    public static final String WHITE = "\033[0;37m";   // WHITE
 
     public static void main(String[] args) throws IOException {
         mainWin();
+    }
+    public static void displayList(){
+        int amount = 0;
+        for (String i : dataInformation){
+            amount++;
+            System.out.println("| " + amount + " | " + i);
+        }
     }
     public static void logo(){
         System.out.println(CYAN +   "   ________        ___            " + ANSI_RESET);
@@ -49,7 +53,7 @@ public class Main {
                 addWin();
                 break;
             case 2:
-                //editWin();
+                editWin();
                 break;
             case 3:
                 deleteWin();
@@ -97,11 +101,7 @@ public class Main {
         logo();
         System.out.println(         GREEN + "  1 - NEW " + ANSI_RESET + YELLOW + "  2 - EDIT"+ ANSI_RESET + RED + "  3 - DELETE" + ANSI_RESET);
 
-        int amount = 0;
-        for (String i : dataInformation){
-            amount++;
-            System.out.println("| " + amount + " | " + i);
-        }
+        displayList();
         dataInformation.clear();
         selectMethod();
     }
@@ -113,11 +113,7 @@ public class Main {
         System.out.println(YELLOW + "   Enter ID of message to" + ANSI_RESET + RED +" DELETE" + ANSI_RESET);
 
         innitArray();
-        int amount = 0;
-        for (String i : dataInformation){
-            amount++;
-            System.out.println("| " + amount + " | " + i);
-        }
+        displayList();
 
         //Take id
         Scanner scan = new Scanner(System.in);
@@ -154,6 +150,39 @@ public class Main {
             pushArray("data.txt");
         }
 
+        dataInformation.clear();
+        mainWin();
+    }
+    public static void editWin() throws IOException{
+        flushTerminal();
+        logo();
+        System.out.println(CYAN + "      Enter message ID to edit" + ANSI_RESET);
+        innitArray();
+        displayList();
+
+        Scanner scan = new Scanner(System.in);
+        try {
+            ID = scan.nextInt();
+            flushTerminal();
+            logo();
+            System.out.println(YELLOW + "Message: " + dataInformation.get(ID - 1) + ANSI_RESET);
+            System.out.println("Enter edited message: ");
+
+            try{
+                Scanner scanTwo = new Scanner(System.in);
+                String newMessage = scanTwo.nextLine();
+                dataInformation.remove(ID - 1);
+                dataInformation.add(ID - 1, newMessage);
+                pushArray("data.txt");
+            }catch(Exception e){
+                isWarning = true;
+                mainWin();
+            }
+        }catch(Exception e){
+            isWarning = true;
+            mainWin();
+            dataInformation.clear();
+        }
         dataInformation.clear();
         mainWin();
     }

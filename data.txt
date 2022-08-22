@@ -1,6 +1,5 @@
 Run with dogs
-Have dinner
 Jump 30 times
 Pull up 10 times super fast
-Create global variable to controll varning message
+Create global variable to control warning message
 Send message is telegram
