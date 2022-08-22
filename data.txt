@@ -1,6 +1,6 @@
-Walk alone while raining
 Run with dogs
 Have dinner
-Hello, Git
 Jump 30 times
 Pull up 10 times super fast
+Create global variable to controll varning message
+Send message is telegram

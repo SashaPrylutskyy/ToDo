@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+    public static int ID = 0;
     public static ArrayList<String> dataInformation = new ArrayList<>();
+    public static Boolean isWarning = false;
 
     public static final String ANSI_RESET = "\u001B[0m";
+    public static final String BLACK = "\033[0;30m";   // BLACK
     public static final String RED = "\033[0;31m";     // RED
     public static final String GREEN = "\033[0;32m";   // GREEN
     public static final String YELLOW = "\033[0;33m";  // YELLOW
@@ -19,36 +22,41 @@ public class Main {
     public static final String WHITE = "\033[0;37m";   // WHITE
 
     public static void main(String[] args) throws IOException {
-        welcomeWin();
+        mainWin();
     }
-    public static void welcomeWin() throws IOException {
-        flushTerminal();
-        System.out.println("* * * * * * ToDo application * * * * * *");
-        System.out.println("*           Select an option           *");
-        System.out.println("* - - - - - - - - - - - - - - - - - -  *");
-        System.out.println("*              1 - List                *");
-        System.out.println("*              2 - Add                 *");
-        System.out.println("*              3 - Edit                *");
-        System.out.println("* _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  *");
-        selectMethod();
+    public static void logo(){
+        System.out.println(CYAN +   "   ________        ___            " + ANSI_RESET);
+        System.out.println(CYAN +   "      ||    ____  |    ╲  ____    " + ANSI_RESET);
+        System.out.println(YELLOW + "      ||   |    | |     ||    |   " + ANSI_RESET);
+        System.out.println(YELLOW + "      ||   |____| |____╱ |____|   " + ANSI_RESET);
+    }
+    public static void pushArray(String filePath) throws IOException{
+        Path output = Paths.get(filePath);
+        Files.write(output, dataInformation);
+        dataInformation.clear();
     }
     public static void selectMethod() throws IOException {
         Scanner scan = new Scanner(System.in);
-        int option = scan.nextInt();
+        int option = 0;
+        try {
+            option = scan.nextInt();
+        } catch (Exception e) {
+            isWarning = true;
+        }
 
-        switch(option){
+        switch (option) {
             case 1:
-                listWin();
-                break;
-            case 2:
                 addWin();
                 break;
-            case 3:
+            case 2:
                 //editWin();
                 break;
+            case 3:
+                deleteWin();
+                break;
             default:
-                //System.out.println("Something went wrong...\nReEnter, please: ");
-                System.out.println("Restart app");
+                isWarning = true;
+                mainWin();
         }
     }
     public static void flushTerminal(){
@@ -64,9 +72,10 @@ public class Main {
     public static void addWin() throws IOException{
         flushTerminal();
 
-        System.out.println("* * * * * * *  ADD Window  * * * * * * *");
-        System.out.println("* - - - - - " + YELLOW + " Enter = Cancel " + ANSI_RESET + " - - - - - *");
-        System.out.println("* * * * * * * Enter a Task * * * * * * *");
+        logo();
+        System.out.println("* * * * * *  ADD Window  * * * * * *");
+        System.out.println("* - - - - " + YELLOW + " Enter = Cancel " + ANSI_RESET + " - - - - *");
+        System.out.println("* * * * * * Enter a Task * * * * * *");
 
         Scanner scan = new Scanner(System.in);
         String Task = scan.nextLine();
@@ -74,29 +83,79 @@ public class Main {
         if (Task != ""){
             innitArray();
             dataInformation.add(Task);
+            pushArray("data.txt");
 
-            Path output = Paths.get("data.txt");
-            Files.write(output, dataInformation);
-            dataInformation.clear();
-
-            welcomeWin();
+            mainWin();
         }
-        else welcomeWin();
+        else mainWin();
     }
-
-    public static void listWin() throws IOException {
+    public static void mainWin() throws IOException {
         flushTerminal();
         innitArray();
-        //ToDo
-        System.out.println(CYAN +   "________        ___         " + ANSI_RESET);
-        System.out.println(CYAN +   "   ||    ____  |    ╲  ____ " + ANSI_RESET);
-        System.out.println(YELLOW + "   ||   |    | |     ||    |" + ANSI_RESET);
-        System.out.println(YELLOW + "   ||   |____| |____╱ |____|" + ANSI_RESET);
+        //ToDo ⭐
+        if (isWarning) System.out.println( RED + "Enter valid value" + ANSI_RESET); isWarning = false; //warning message
+        logo();
+        System.out.println(         GREEN + "  1 - NEW " + ANSI_RESET + YELLOW + "  2 - EDIT"+ ANSI_RESET + RED + "  3 - DELETE" + ANSI_RESET);
+
         int amount = 0;
         for (String i : dataInformation){
             amount++;
             System.out.println("| " + amount + " | " + i);
         }
+        dataInformation.clear();
+        selectMethod();
+    }
+
+    public static void deleteWin() throws IOException{
+        flushTerminal();
+        if (isWarning) System.out.println( RED + "Enter valid value" + ANSI_RESET); isWarning = false; //warning message
+        logo();
+        System.out.println(YELLOW + "   Enter ID of message to" + ANSI_RESET + RED +" DELETE" + ANSI_RESET);
+
+        innitArray();
+        int amount = 0;
+        for (String i : dataInformation){
+            amount++;
+            System.out.println("| " + amount + " | " + i);
+        }
+
+        //Take id
+        Scanner scan = new Scanner(System.in);
+        try {
+            ID = scan.nextInt();
+        }catch (Exception e){
+            isWarning = true;
+        }
+        dataInformation.clear();
+
+        verifyDelete();
+    }
+    public static void verifyDelete() throws IOException{
+        flushTerminal();
+        logo();
+        System.out.println(YELLOW + "   Message will be deleted permanently" + ANSI_RESET);
+        System.out.println("      Enter 'Y' to DELETE");
+        System.out.println("      Other key to cancel");
+
+        innitArray();
+        System.out.println(YELLOW + "\n   Message: "+ ANSI_RESET + RED + dataInformation.get(ID - 1) + ANSI_RESET);
+
+        Scanner scan = new Scanner(System.in);
+
+        String option = "";
+        try{
+            option = scan.nextLine();
+        }catch(Exception e){
+            isWarning = true;
+        }
+        if (option.equals("y") || option.equals("Y") || option.equals("YES") || option.equals("Yes") || option.equals("yes")){
+            dataInformation.remove(ID - 1);
+            ID = 0;
+            pushArray("data.txt");
+        }
+
+        dataInformation.clear();
+        mainWin();
     }
 
 }
